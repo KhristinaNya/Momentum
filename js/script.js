@@ -1,11 +1,13 @@
+import playList from './playList.js';
+
 document.addEventListener("DOMContentLoaded", async () => {
-
     const time = document.querySelector('.time');
-
     const day = document.querySelector('.date');
     const greeting = document.querySelector('.greeting');
     const greetingText = document.querySelector('.greeting-container .name');
+
     const body = document.querySelector('body');
+
     const next = document.querySelector('.slide-next');
     const prev = document.querySelector('.slide-prev');
     const weatherIcon = document.querySelector('.weather-icon');
@@ -13,10 +15,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     const weatherDescription = document.querySelector('.weather-description');
     const wind = document.querySelector('.wind');
     const humidity = document.querySelector('.humidity');
+
     const city = document.querySelector('.city');
+    
     const quote = document.querySelector('.quote');
     const author = document.querySelector('.author');
     const changeQuote = document.querySelector('.change-quote');
+    const nextAudo = document.querySelector('.play-next');
+    const prevAudo = document.querySelector('.play-prev');
+    const li = document.createElement('li');
 
     let userName = '';
 
@@ -177,7 +184,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const playBtnAudio = document.querySelector('.play');
 
     function playAudio() {
-        audio.src = 'assets/sounds/Summer Wind.mp3';
+        audio.src = playList[playNum]['src'];
         audio.currentTime = 0;
         audio.play();
     }
@@ -198,10 +205,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
     function playNext() {
-
+        playNum = (playNum === 3 ? 0 : playNum + 1);
     }
 
     function playPrev() {
-
+        playNum = (playNum === 0 ? 3 : playNum - 1);
     }
+
+    let playNum = 0;
+
+    nextAudo.addEventListener('click', (event) => {
+        playNext();
+        playAudio();
+        playBtnAudio.classList.add('pause');
+    });
+    prevAudo.addEventListener('click', (event) => {
+        playPrev();
+        playAudio();
+        playBtnAudio.classList.add('pause');
+    } );
 });         

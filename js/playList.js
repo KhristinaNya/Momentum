@@ -16,7 +16,7 @@ const playList = [
     },
     {
         title: 'Summer Wind',
-        src: '../assets/sounds/River Flows In You.mp3',
+        src: '../assets/sounds/Summer Wind.mp3',
         duration: '01:50'
     }
 ]
