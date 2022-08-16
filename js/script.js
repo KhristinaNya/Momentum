@@ -23,8 +23,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     const changeQuote = document.querySelector('.change-quote');
     const nextAudo = document.querySelector('.play-next');
     const prevAudo = document.querySelector('.play-prev');
-    const li = document.createElement('li');
-
+    const state = {
+        ['Language']: 'en',
+        ['Photo Source']: 'github',
+        //blocks: ['time', 'date','greeting', 'quote', 'weather', 'audio', 'todolist'],
+    }
+    const greetingTranslation = {
+        'en' :  `Good ${getTimeOfDay(getHours())}`,
+        'ru' :  getTimeOfDayRus(getHours())
+    }
     let userName = '';
 
     function showTime() {
@@ -69,9 +76,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    function getTimeOfDayRus(time) {
+        if (time < 6) {
+            return 'Спокойной ночи';
+        }
+        else if (time < 12) {
+            return 'Доброе утро';
+        }
+        else if (time < 18) {
+            return 'Добрый день';
+        }
+        else {
+            return 'Добрый вечер';
+        }
+    }
+
     function showGreeting() {
-        const timeOfDay = getTimeOfDay(getHours());
-        const greetingText = `Good ${timeOfDay}`;
+        const greetingText = greetingTranslation[[state['Language']]];
         greeting.textContent = greetingText;
     }
 
@@ -187,6 +208,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         audio.src = playList[playNum]['src'];
         audio.currentTime = 0;
         audio.play();
+        toggleList ();
+        audio.onended = () => {
+            playNext();
+        }
     }
 
     function pauseAudio() {
@@ -206,22 +231,80 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function playNext() {
         playNum = (playNum === 3 ? 0 : playNum + 1);
+        playAudio();
+        playBtnAudio.classList.add('pause');
+        
     }
 
     function playPrev() {
         playNum = (playNum === 0 ? 3 : playNum - 1);
+        playAudio();
+        playBtnAudio.classList.add('pause');
     }
 
     let playNum = 0;
 
-    nextAudo.addEventListener('click', (event) => {
-        playNext();
-        playAudio();
-        playBtnAudio.classList.add('pause');
-    });
-    prevAudo.addEventListener('click', (event) => {
-        playPrev();
-        playAudio();
-        playBtnAudio.classList.add('pause');
-    } );
+    nextAudo.addEventListener('click', playNext);
+    prevAudo.addEventListener('click', playPrev);
+
+    const playListContainer = document.querySelector('.player');
+
+    const ul = document.createElement('ul');
+    ul.classList.add('play-list');
+    playListContainer.append(ul);
+
+    playList.forEach(element =>{
+        const li = document.createElement('li');
+        li.classList.add('play-item');
+        li.textContent = element['title'];
+        ul.append(li);
+    })
+
+    const playListItems = document.querySelectorAll('.play-item');
+     
+    function toggleList () {
+        playListItems.forEach((element, index)=>{
+            if (index === playNum) {
+               element.classList.add('item-active');
+            }
+            else{
+                element.classList.remove('item-active');
+            }
+        });
+    }
+
+    const settingList = document.querySelector('.setting');
+    const ul2 = document.createElement('ul');
+
+    ul2.classList.add('setting-list');
+    settingList.append(ul2);
+    
+    Object.keys(state).forEach((element, index) =>{
+        const li = document.createElement('li');
+        li.classList.add('setting-item');
+        if (index === 0){
+            li.textContent = `${element} : ${state['Language']}`;
+            ul2.append(li);
+            li.addEventListener('click', () => {
+                state['Language'] = (state['Language'] === 'en'? 'ru' : 'en');
+                greeting.textContent = greetingTranslation[[state['Language']]] ;
+                li.textContent = `${element} : ${state['Language']}`;
+            });
+        }
+        if (index === 1){
+            const a = document.createElement('a');
+            a.classList.add('a');
+            a.href="https://github.com/KhristinaNya/stage1-tasks/tree/assets/images";
+            a.target="_blank";
+            a.textContent =  element;
+            ul2.append(li);
+            li.append(a);
+        }
+    })
+    const settingUl = document.querySelector('.setting-list');
+    const settingImg = document.querySelector('.img-setting');
+    settingList.addEventListener('click', (event)=>{
+        settingUl.classList.toggle('opened');
+        settingImg.classList.toggle('opened');
+    })
 });         
