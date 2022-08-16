@@ -307,4 +307,4 @@ document.addEventListener("DOMContentLoaded", async () => {
         settingUl.classList.toggle('opened');
         settingImg.classList.toggle('opened');
     })
-});         
+})
