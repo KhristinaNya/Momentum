@@ -263,7 +263,51 @@ body {
 .author {
   min-height: 20px;
 }
-
+.setting{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.img-setting{
+  background-image: url("../assets/svg/setting.svg");  
+  height: 32px;
+  width: 32px;
+  background-size: 32px 32px;
+  cursor: pointer;
+  opacity: .8;
+  transition: 0.7s;
+}
+.img-setting.opened{
+  opacity: 0.2;
+}
+.img-setting:hover {
+  opacity: 1;
+}
+.setting-list{
+  opacity: 0;
+  transition: 0.7s;
+  list-style: none;
+}
+.setting-list.opened{
+  opacity: 1;
+  display: flex;
+  list-style: none;
+  flex-direction: column;
+  transition: 0.7s;
+  cursor: pointer;
+}
+.setting-item {
+  opacity: 0.5;
+  transition: 0.7s;
+}
+.setting-item:hover {
+  opacity: 1;
+  transition: 0.7s;
+}
+.setting-item a{
+  color: #fff;
+  text-decoration: none;
+}
 @media (max-width: 768px) {
   .time {
     min-height: 80px;

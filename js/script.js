@@ -1,11 +1,13 @@
+import playList from './playList.js';
+
 document.addEventListener("DOMContentLoaded", async () => {
-
     const time = document.querySelector('.time');
-
     const day = document.querySelector('.date');
     const greeting = document.querySelector('.greeting');
     const greetingText = document.querySelector('.greeting-container .name');
+
     const body = document.querySelector('body');
+
     const next = document.querySelector('.slide-next');
     const prev = document.querySelector('.slide-prev');
     const weatherIcon = document.querySelector('.weather-icon');
@@ -13,11 +15,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     const weatherDescription = document.querySelector('.weather-description');
     const wind = document.querySelector('.wind');
     const humidity = document.querySelector('.humidity');
+
     const city = document.querySelector('.city');
+    
     const quote = document.querySelector('.quote');
     const author = document.querySelector('.author');
     const changeQuote = document.querySelector('.change-quote');
-
+    const nextAudo = document.querySelector('.play-next');
+    const prevAudo = document.querySelector('.play-prev');
+    const state = {
+        ['Language']: 'en',
+        ['Photo Source']: 'github',
+        //blocks: ['time', 'date','greeting', 'quote', 'weather', 'audio', 'todolist'],
+    }
+    const greetingTranslation = {
+        'en' :  `Good ${getTimeOfDay(getHours())}`,
+        'ru' :  getTimeOfDayRus(getHours())
+    }
     let userName = '';
 
     function showTime() {
@@ -62,9 +76,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    function getTimeOfDayRus(time) {
+        if (time < 6) {
+            return 'Спокойной ночи';
+        }
+        else if (time < 12) {
+            return 'Доброе утро';
+        }
+        else if (time < 18) {
+            return 'Добрый день';
+        }
+        else {
+            return 'Добрый вечер';
+        }
+    }
+
     function showGreeting() {
-        const timeOfDay = getTimeOfDay(getHours());
-        const greetingText = `Good ${timeOfDay}`;
+        const greetingText = greetingTranslation[[state['Language']]];
         greeting.textContent = greetingText;
     }
 
@@ -177,9 +205,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const playBtnAudio = document.querySelector('.play');
 
     function playAudio() {
-        audio.src = 'assets/sounds/Summer Wind.mp3';
+        audio.src = playList[playNum]['src'];
         audio.currentTime = 0;
         audio.play();
+        toggleList ();
+        audio.onended = () => {
+            playNext();
+        }
     }
 
     function pauseAudio() {
@@ -198,10 +230,81 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
     function playNext() {
-
+        playNum = (playNum === 3 ? 0 : playNum + 1);
+        playAudio();
+        playBtnAudio.classList.add('pause');
+        
     }
 
     function playPrev() {
-
+        playNum = (playNum === 0 ? 3 : playNum - 1);
+        playAudio();
+        playBtnAudio.classList.add('pause');
     }
+
+    let playNum = 0;
+
+    nextAudo.addEventListener('click', playNext);
+    prevAudo.addEventListener('click', playPrev);
+
+    const playListContainer = document.querySelector('.player');
+
+    const ul = document.createElement('ul');
+    ul.classList.add('play-list');
+    playListContainer.append(ul);
+
+    playList.forEach(element =>{
+        const li = document.createElement('li');
+        li.classList.add('play-item');
+        li.textContent = element['title'];
+        ul.append(li);
+    })
+
+    const playListItems = document.querySelectorAll('.play-item');
+     
+    function toggleList () {
+        playListItems.forEach((element, index)=>{
+            if (index === playNum) {
+               element.classList.add('item-active');
+            }
+            else{
+                element.classList.remove('item-active');
+            }
+        });
+    }
+
+    const settingList = document.querySelector('.setting');
+    const ul2 = document.createElement('ul');
+
+    ul2.classList.add('setting-list');
+    settingList.append(ul2);
+    
+    Object.keys(state).forEach((element, index) =>{
+        const li = document.createElement('li');
+        li.classList.add('setting-item');
+        if (index === 0){
+            li.textContent = `${element} : ${state['Language']}`;
+            ul2.append(li);
+            li.addEventListener('click', () => {
+                state['Language'] = (state['Language'] === 'en'? 'ru' : 'en');
+                greeting.textContent = greetingTranslation[[state['Language']]] ;
+                li.textContent = `${element} : ${state['Language']}`;
+            });
+        }
+        if (index === 1){
+            const a = document.createElement('a');
+            a.classList.add('a');
+            a.href="https://github.com/KhristinaNya/stage1-tasks/tree/assets/images";
+            a.target="_blank";
+            a.textContent =  element;
+            ul2.append(li);
+            li.append(a);
+        }
+    })
+    const settingUl = document.querySelector('.setting-list');
+    const settingImg = document.querySelector('.img-setting');
+    settingList.addEventListener('click', (event)=>{
+        settingUl.classList.toggle('opened');
+        settingImg.classList.toggle('opened');
+    })
 });         
